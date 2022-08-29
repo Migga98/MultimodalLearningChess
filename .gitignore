@@ -131,6 +131,12 @@ dmypy.json
 # Data
 .idea
 /src/data/pgn
-/src/data/datasets
+/src/data/model_data
+#/src/data/datasets
 /venv
-/src/data/model_data/
+*.pkl
+!/src/data/datasets/
+!/src/data/datasets/gameknot_preprocessed/
+*dataset_part*
+!/src/data/datasets/master_games_preprocessed/
+!/src/data/datasets/principal_variations_preprocessed/
