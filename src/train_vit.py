@@ -56,7 +56,7 @@ if __name__ == "__main__":
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
-    sample_every = 500
+    sample_every = 100
 
     label2id, id2label = dict(), dict()
     for i, label in enumerate(LABELS):
@@ -179,7 +179,7 @@ if __name__ == "__main__":
                 outputs = model(pixel_values=pixel_values,
                                 labels=labels,
                                 )
-            loss = scaler.scale(outputs[0])
+            loss = outputs[0]
 
             batch_loss = loss.item()
             total_train_loss += batch_loss
@@ -208,7 +208,7 @@ if __name__ == "__main__":
                 model.train()
                 '''
 
-            loss.backward()
+            scaler.scale(loss).backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             scaler.step(optimizer)
 
