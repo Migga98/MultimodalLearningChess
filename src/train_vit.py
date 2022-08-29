@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from utils import board_to_planes, save_as_pickle
 from constants import LABELS, MV_LOOKUP
 
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
 class Image_Dataset(Dataset):
@@ -42,6 +42,7 @@ class Image_Dataset(Dataset):
 def format_time(elapsed):
     return str(datetime.timedelta(seconds=int(round((elapsed)))))
 
+
 '''
 from huggingface_hub import notebook_login
 sudo apt -qq install git-lfs
@@ -50,7 +51,7 @@ notebook_login()
 '''
 
 if __name__ == "__main__":
-    batch_size = 256
+    batch_size = 512
     epochs = 10
     learning_rate = 2e-5
     warmup_steps = 1e2
@@ -84,7 +85,7 @@ if __name__ == "__main__":
         state_data.append(state)
         move_data.append(move_nr)
 
-    df = pd.DataFrame.from_dict({"img": state_data, "label": move_data},)
+    df = pd.DataFrame.from_dict({"img": state_data, "label": move_data}, )
 
     dataset = Image_Dataset(df, )
 
@@ -99,7 +100,7 @@ if __name__ == "__main__":
         sampler=RandomSampler(train_dataset),  # Select batches randomly
         batch_size=batch_size,
         pin_memory=True,
-        # num_workers=4
+        num_workers=4
     )
 
     validation_dataloader = DataLoader(
@@ -107,7 +108,7 @@ if __name__ == "__main__":
         sampler=SequentialSampler(val_dataset),  # Pull out batches sequentially.
         batch_size=batch_size,
         pin_memory=True,
-        # num_workers=4
+        num_workers=4
     )
 
     configuration = ViTConfig(num_hidden_layers=6, num_attention_heads=6, image_size=8,
@@ -142,8 +143,8 @@ if __name__ == "__main__":
     # Start the RTPT tracking
     rtpt.start()
 
-    #torch.backends.cudnn.benchmark = True
-
+    torch.backends.cudnn.benchmark = True
+    scaler = torch.cuda.amp.GradScaler()
     total_t0 = time.time()
 
     training_stats = []
@@ -174,11 +175,11 @@ if __name__ == "__main__":
             for param in model.parameters():
                 param.grad = None
 
-            outputs = model(pixel_values=pixel_values,
-                            labels=labels,
-                            )
-
-            loss = outputs[0]
+            with torch.cuda.amp.autocast():
+                outputs = model(pixel_values=pixel_values,
+                                labels=labels,
+                                )
+            loss = scaler.scale(outputs[0])
 
             batch_loss = loss.item()
             total_train_loss += batch_loss
@@ -209,9 +210,10 @@ if __name__ == "__main__":
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            optimizer.step()
+            scaler.step(optimizer)
 
             scheduler.step()
+            scaler.update()
 
         # Calculate the average loss over all of the batches.
         avg_train_loss = total_train_loss / len(train_dataloader)
