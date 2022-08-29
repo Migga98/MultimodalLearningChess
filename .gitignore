@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # Data
-./idea
+.idea
 /src/data/pgn
 /src/data/datasets
 /venv
