@@ -11,3 +11,6 @@ huggingface_hub
 transformers
 datasets
 scikit-learn
+scipy
+matplotlib
+seaborn
