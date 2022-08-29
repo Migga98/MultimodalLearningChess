@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Data
+./idea
+/src/data/pgn
+/src/data/datasets
+/venv
+/src/data/model_data/

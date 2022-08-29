@@ -1,0 +1,13 @@
+torch
+chess
+numpy
+pandas
+pickle-mixin
+torchinfo
+tqdm
+rtpt
+langdetect
+huggingface_hub
+transformers
+datasets
+scikit-learn
