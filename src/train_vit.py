@@ -216,11 +216,11 @@ if __name__ == "__main__":
 
         # Measure how long this epoch took.
         training_time = format_time(time.time() - t0)
-
+        rtpt.step(subtitle=f"loss={avg_train_loss:2.2f}")
         print("")
         print("  Average training loss: {0:.2f}".format(avg_train_loss))
         print("  Training epoch took: {:}".format(training_time))
-        rtpt.step(subtitle=f"loss={avg_train_loss:2.2f}")
+
         # ========================================
         #               Validation
         # ========================================
