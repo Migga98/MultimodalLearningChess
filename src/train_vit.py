@@ -138,7 +138,7 @@ if __name__ == "__main__":
 
     # Create RTPT object
     experiment_name = 'ViT_Chess_DGX_V1'
-    rtpt = RTPT(name_initials='MP', experiment_name="ViT_Chess", max_iterations=3)
+    rtpt = RTPT(name_initials='MP', experiment_name="ViT_Chess", max_iterations=epochs)
     # Start the RTPT tracking
     rtpt.start()
 
@@ -282,6 +282,9 @@ if __name__ == "__main__":
     print("Total training took {:} (h:mm:ss)".format(format_time(time.time() - total_t0)))
 
     df_stats = pd.DataFrame(data=training_stats)
+    os.makedirs('./data/train_stats/ViT_Chess', exist_ok=True)
+
+    df.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name))
 
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
