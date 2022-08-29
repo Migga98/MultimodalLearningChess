@@ -13,5 +13,3 @@ RUN cd /root \
 
 CMD cd /root/MultimodalLearningChess/src/ \
     && /bin/bash
-
-#&& git clone https://github.com/Migga98/MultimodalLearningChess.git \

@@ -299,7 +299,7 @@ if __name__ == "__main__":
     plt.ylabel("Loss")
     plt.legend()
     plt.xticks(range(1, epochs + 1))
-    plt.savefig(os.path.join("./model_data/ViT_Chess",
+    plt.savefig(os.path.join("./data/train_stats/ViT_Chess",
                              "Loss_vs_Epoch_%s.png" % datetime.datetime.today().strftime("%Y-%m-%d-%H:%M")))
     # plt.show()
 
