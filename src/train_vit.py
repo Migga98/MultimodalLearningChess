@@ -140,7 +140,7 @@ if __name__ == "__main__":
     # Start the RTPT tracking
     rtpt.start()
 
-    torch.backends.cudnn.benchmark = True
+    #torch.backends.cudnn.benchmark = True
 
     total_t0 = time.time()
 
