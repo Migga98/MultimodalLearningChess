@@ -1,5 +1,5 @@
-#FROM pytorch/pytorch
-FROM nvcr.io/nvidia/pytorch:22.04-py3
+FROM pytorch/pytorch
+#FROM nvcr.io/nvidia/pytorch:22.04-py3
 
 
 MAINTAINER MikaPommeranz
