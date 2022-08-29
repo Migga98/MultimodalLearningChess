@@ -65,6 +65,8 @@ if __name__ == "__main__":
     directory = "./data/datasets/master_games_preprocessed"
     data = []
     for idx, file in enumerate((os.listdir(directory))):
+        if file == ".gitignore":
+            continue
         filename = os.path.join(directory, file)
         with open(filename, 'rb') as fo:
             data.extend(pickle.load(fo, encoding='bytes'))
