@@ -51,7 +51,7 @@ notebook_login()
 
 if __name__ == "__main__":
     batch_size = 64
-    epochs = 10
+    epochs = 3
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     state_data = []
     move_data = []
     length = data.shape[0]
-    for i in range(int(length * 1)):
+    for i in range(int(length * 0.1)):
         state = data[:][i][0]
         move = data[:][i][2]
         move_nr = MV_LOOKUP[move]
