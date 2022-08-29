@@ -51,11 +51,11 @@ notebook_login()
 
 if __name__ == "__main__":
     batch_size = 256
-    epochs = 3
+    epochs = 10
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
-    sample_every = 200
+    sample_every = 500
 
     label2id, id2label = dict(), dict()
     for i, label in enumerate(LABELS):
