@@ -3,7 +3,6 @@ import pandas as pd
 import os
 import torch
 import pickle
-from datasets import load_metric
 from torch.utils.data import DataLoader, Dataset, random_split, RandomSampler, SequentialSampler
 from rtpt import RTPT
 from transformers import ViTForImageClassification, ViTConfig, get_linear_schedule_with_warmup
@@ -12,6 +11,7 @@ import time
 import datetime
 import seaborn as sns
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 from utils import board_to_planes, save_as_pickle
 from constants import LABELS, MV_LOOKUP
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     model = model.to(device)
 
-    for epoch_i in range(0, epochs):
+    for epoch_i in tqdm(range(0, epochs)):
 
         # ========================================
         #               Training
@@ -289,6 +289,8 @@ if __name__ == "__main__":
     print("Training complete!")
     print("Total training took {:} (h:mm:ss)".format(format_time(time.time() - total_t0)))
 
+    model.push_to_hub(repo_path_or_name=experiment_name)
+
     df_stats = pd.DataFrame(data=training_stats)
     os.makedirs('./data/train_stats/ViT_Chess', exist_ok=True)
 
@@ -316,4 +318,4 @@ if __name__ == "__main__":
                              "Loss_vs_Epoch_%s.png" % datetime.datetime.today().strftime("%Y-%m-%d-%H-%M")))
     # plt.show()
 
-    model.push_to_hub(repo_path_or_name=experiment_name)
+
