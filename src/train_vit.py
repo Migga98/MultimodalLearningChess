@@ -290,7 +290,7 @@ if __name__ == "__main__":
     df_stats = pd.DataFrame(data=training_stats)
     os.makedirs('./data/train_stats/ViT_Chess', exist_ok=True)
 
-    df.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name))
+    df.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name, ".csv"))
 
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
@@ -311,7 +311,7 @@ if __name__ == "__main__":
     plt.legend()
     plt.xticks(range(1, epochs + 1))
     plt.savefig(os.path.join("./data/train_stats/ViT_Chess",
-                             "Loss_vs_Epoch_%s.png" % datetime.datetime.today().strftime("%Y-%m-%d-%H:%M")))
+                             "Loss_vs_Epoch_%s.png" % datetime.datetime.today().strftime("%Y-%m-%d-%H-%M")))
     # plt.show()
 
     model.push_to_hub(repo_path_or_name=experiment_name)
