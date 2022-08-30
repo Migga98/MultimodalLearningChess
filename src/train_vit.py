@@ -52,7 +52,7 @@ notebook_login()
 
 if __name__ == "__main__":
     batch_size = 256
-    epochs = 20
+    epochs = 15
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -119,6 +119,8 @@ if __name__ == "__main__":
                               # qkv_bias=False,
                               id2label=id2label,
                               label2id=label2id,
+                              hidden_dropout_prob=0.1,
+                              attention_probs_dropout_prob=0.1
                               )
     model = ViTForImageClassification(configuration)
 
@@ -290,7 +292,7 @@ if __name__ == "__main__":
     df_stats = pd.DataFrame(data=training_stats)
     os.makedirs('./data/train_stats/ViT_Chess', exist_ok=True)
 
-    df.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name, ".csv"))
+    df.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".csv"))
 
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
