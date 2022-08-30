@@ -52,7 +52,7 @@ notebook_login()
 
 if __name__ == "__main__":
     batch_size = 256
-    epochs = 15
+    epochs = 20
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     rtpt.start()
 
     torch.backends.cudnn.benchmark = True
-    scaler = torch.cuda.amp.GradScaler()
+    #scaler = torch.cuda.amp.GradScaler()
     total_t0 = time.time()
 
     training_stats = []
@@ -174,11 +174,14 @@ if __name__ == "__main__":
 
             for param in model.parameters():
                 param.grad = None
-
+            '''
             with torch.cuda.amp.autocast():
                 outputs = model(pixel_values=pixel_values,
                                 labels=labels,
                                 )
+
+            '''
+            outputs = model(pixel_values=pixel_values,labels=labels,)
             loss = outputs[0]
 
             batch_loss = loss.item()
@@ -208,12 +211,13 @@ if __name__ == "__main__":
                 model.train()
                 '''
 
-            scaler.scale(loss).backward()
+            #scaler.scale(loss).backward()
+            loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            scaler.step(optimizer)
-
+            #scaler.step(optimizer)
+            optimizer.step()
             scheduler.step()
-            scaler.update()
+            #scaler.update()
 
         # Calculate the average loss over all of the batches.
         avg_train_loss = total_train_loss / len(train_dataloader)
