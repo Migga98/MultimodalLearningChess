@@ -51,7 +51,7 @@ notebook_login()
 '''
 
 if __name__ == "__main__":
-    batch_size = 256
+    batch_size = 512  # 256
     epochs = 15
     learning_rate = 2e-5
     warmup_steps = 1e2
