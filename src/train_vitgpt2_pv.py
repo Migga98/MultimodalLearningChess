@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
     decoder = GPT2LMHeadModel.from_pretrained("gpt2", is_decoder=True, add_cross_attention=True,
                                               output_hidden_states=False)
-    encoder = AutoModel.from_pretrained("Migga/ViT_Chess_DGX_V4", use_auth_token=True, )
+    encoder = AutoModel.from_pretrained("Migga/ViT_Chess_DGX_V8", use_auth_token=True, )
     tokenizer = GPT2Tokenizer.from_pretrained('gpt2', bos_token='<|startoftext|>', eos_token='<|endoftext|>',
                                               pad_token='<|pad|>')
     # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
