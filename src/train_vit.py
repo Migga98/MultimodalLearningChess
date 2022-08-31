@@ -52,6 +52,7 @@ notebook_login()
 '''
 
 if __name__ == "__main__":
+    experiment_name = 'ViT_Chess_DGX_V7'
     batch_size = 128  # 256
     epochs = 10
     learning_rate = 2e-5
@@ -147,7 +148,7 @@ if __name__ == "__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
     # Create RTPT object
-    experiment_name = 'ViT_Chess_DGX_V6'
+
     rtpt = RTPT(name_initials='MP', experiment_name="ViT_Chess", max_iterations=epochs)
     # Start the RTPT tracking
     rtpt.start()
