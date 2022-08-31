@@ -53,7 +53,7 @@ notebook_login()
 
 if __name__ == "__main__":
     batch_size = 64  # 256
-    epochs = 5
+    epochs = 10
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         #num_workers=4
     )
 
-    configuration = ViTConfig(num_hidden_layers=6,
+    configuration = ViTConfig(num_hidden_layers=12,
                               num_attention_heads=12,#6,
                               image_size=8,
                               patch_size=2,

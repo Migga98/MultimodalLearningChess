@@ -28,15 +28,15 @@ if __name__ == "__main__":
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
-    configuration = ViTConfig(num_hidden_layers=6,
-                              num_attention_heads=6,
+    configuration = ViTConfig(num_hidden_layers=12,
+                              num_attention_heads=12,
                               image_size=8,
                               patch_size=2,
                               num_channels=24,
                               num_labels=1968,
                               add_pooling_layer=False,
-                              hidden_size=1968,
-                              intermediate_size=1 * 1968,
+                              hidden_size=768,
+                              intermediate_size=3072,
                               # layer_norm_eps=0.0,
                               encoder_stride=1,
                               # qkv_bias=False,
