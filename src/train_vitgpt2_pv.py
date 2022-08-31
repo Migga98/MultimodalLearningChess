@@ -334,5 +334,11 @@ if __name__ == "__main__":
         path_in_repo=name,
         repo_id=rep_name,
     )
+    upload_file(
+        path_or_fileobj=savedir,
+        path_in_repo=os.path.join("./data/train_stats/ViTGPT2_PV", experiment_name + ".csv"),
+        repo_id=rep_name,
+    )
+
 
 

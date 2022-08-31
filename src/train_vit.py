@@ -105,7 +105,7 @@ if __name__ == "__main__":
     )
 
     validation_dataloader = DataLoader(
-        val_dataset,  #
+        val_dataset,
         sampler=SequentialSampler(val_dataset),  # Pull out batches sequentially.
         batch_size=batch_size,
         pin_memory=True,
