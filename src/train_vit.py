@@ -301,7 +301,7 @@ if __name__ == "__main__":
     df_stats = pd.DataFrame(data=training_stats)
     os.makedirs('./data/train_stats/ViT_Chess', exist_ok=True)
 
-    #df.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".csv"))
+    df_stats.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".csv"))
 
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
