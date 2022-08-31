@@ -45,6 +45,7 @@ if __name__ == "__main__":
                               )
     model = ViTForImageClassification(configuration)
 
+    model.cuda()
     batch_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
     rtpt = RTPT(name_initials='MP', experiment_name="Test_batch_size_ViT", max_iterations=len(batch_sizes))
     rtpt.start()
