@@ -1,6 +1,6 @@
 import torch
 from rtpt import RTPT
-from transformers import ViTForImageClassification, ViTConfig, get_linear_schedule_with_warmup
+from transformers import ViTForImageClassification, ViTConfig
 
 import time
 
@@ -25,6 +25,8 @@ if __name__ == "__main__":
     for i, label in enumerate(LABELS):
         label2id[label] = i
         id2label[i] = label
+
+    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
     configuration = ViTConfig(num_hidden_layers=6,
                               num_attention_heads=6,

@@ -53,7 +53,7 @@ notebook_login()
 
 if __name__ == "__main__":
     batch_size = 64  # 256
-    epochs = 10
+    epochs = 5
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         sampler=RandomSampler(train_dataset),  # Select batches randomly
         batch_size=batch_size,
         pin_memory=True,
-        num_workers=4
+        #num_workers=4
     )
 
     validation_dataloader = DataLoader(
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         sampler=SequentialSampler(val_dataset),  # Pull out batches sequentially.
         batch_size=batch_size,
         pin_memory=True,
-        num_workers=4
+        #num_workers=4
     )
 
     configuration = ViTConfig(num_hidden_layers=6,
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     optimizer = AdamW(model.parameters(),
                       lr=learning_rate,
                       eps=epsilon,
-                      weight_decay=0.01,
+                      weight_decay=0.1,
                       correct_bias=False,
                       )
 
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
     # Create RTPT object
-    experiment_name = 'ViT_Chess_DGX_V4'
+    experiment_name = 'ViT_Chess_DGX_V5'
     rtpt = RTPT(name_initials='MP', experiment_name="ViT_Chess", max_iterations=epochs)
     # Start the RTPT tracking
     rtpt.start()
