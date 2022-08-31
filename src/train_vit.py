@@ -52,10 +52,10 @@ notebook_login()
 '''
 
 if __name__ == "__main__":
-    experiment_name = 'ViT_Chess_DGX_V9'
+    experiment_name = 'ViT_Chess_DGX_V10'
     batch_size = 64  # 256
-    epochs = 20
-    learning_rate = 2e-5
+    epochs = 25
+    learning_rate = 0.5*2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
     sample_every = 500
@@ -127,8 +127,8 @@ if __name__ == "__main__":
                               # qkv_bias=False,
                               id2label=id2label,
                               label2id=label2id,
-                              hidden_dropout_prob=0.1,
-                              attention_probs_dropout_prob=0.1
+                              #hidden_dropout_prob=0.1,
+                              #attention_probs_dropout_prob=0.1
                               )
     model = ViTForImageClassification(configuration)
 
