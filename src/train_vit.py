@@ -52,7 +52,7 @@ notebook_login()
 '''
 
 if __name__ == "__main__":
-    experiment_name = 'ViT_Chess_DGX_V8'
+    experiment_name = 'ViT_Chess_DGX_V9'
     batch_size = 64  # 256
     epochs = 15
     learning_rate = 2e-5
