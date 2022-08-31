@@ -112,16 +112,22 @@ if __name__ == "__main__":
         num_workers=4
     )
 
-    configuration = ViTConfig(num_hidden_layers=6, num_attention_heads=6, image_size=8,
-                              patch_size=2, num_channels=24, num_labels=1968,
-                              add_pooling_layer=False, hidden_size=1968, intermediate_size=1 * 1968,
+    configuration = ViTConfig(num_hidden_layers=6,
+                              num_attention_heads=12,
+                              image_size=8,
+                              patch_size=2,
+                              num_channels=24,
+                              num_labels=1968,
+                              add_pooling_layer=False,
+                              hidden_size=1968,
+                              intermediate_size=4 * 1968,
                               # layer_norm_eps=0.0,
                               encoder_stride=1,
                               # qkv_bias=False,
                               id2label=id2label,
                               label2id=label2id,
-                              hidden_dropout_prob=0.1,
-                              attention_probs_dropout_prob=0.1
+                              #hidden_dropout_prob=0.1,
+                              #attention_probs_dropout_prob=0.1
                               )
     model = ViTForImageClassification(configuration)
 
