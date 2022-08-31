@@ -113,14 +113,14 @@ if __name__ == "__main__":
     )
 
     configuration = ViTConfig(num_hidden_layers=6,
-                              num_attention_heads=6,
+                              num_attention_heads=12,#6,
                               image_size=8,
                               patch_size=2,
                               num_channels=24,
                               num_labels=1968,
                               add_pooling_layer=False,
-                              hidden_size=1968,
-                              intermediate_size=1 * 1968,
+                              hidden_size=768,#1968,
+                              intermediate_size=3072, #1 * 1968,
                               # layer_norm_eps=0.0,
                               encoder_stride=1,
                               # qkv_bias=False,
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     optimizer = AdamW(model.parameters(),
                       lr=learning_rate,
                       eps=epsilon,
-                      weight_decay=0.1,
+                      weight_decay=0.01,
                       correct_bias=False,
                       )
 
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
     # Create RTPT object
-    experiment_name = 'ViT_Chess_DGX_V5'
+    experiment_name = 'ViT_Chess_DGX_V6'
     rtpt = RTPT(name_initials='MP', experiment_name="ViT_Chess", max_iterations=epochs)
     # Start the RTPT tracking
     rtpt.start()

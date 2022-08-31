@@ -54,7 +54,7 @@ def format_time(elapsed):
 
 if __name__ == "__main__":
     batch_size = 64
-    epochs = 3
+    epochs = 2
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -302,9 +302,9 @@ if __name__ == "__main__":
     model.push_to_hub(repo_path_or_name=experiment_name)
 
     df_stats = pd.DataFrame(data=training_stats)
-    os.makedirs('./data/train_stats/ViTGPT2_pv_Chess', exist_ok=True)
+    os.makedirs('./data/train_stats/ViTGPT2_PV', exist_ok=True)
 
-    df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_pv_Chess", experiment_name + ".csv"))
+    df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_PV", experiment_name + ".csv"))
 
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
@@ -325,7 +325,7 @@ if __name__ == "__main__":
     plt.legend()
     plt.xticks(range(1, epochs + 1))
     name = "Loss_vs_Epoch_%s.png" % datetime.datetime.today().strftime("%Y-%m-%d-%H-%M")
-    savedir = os.path.join("./data/train_stats/ViTGPT2_pv_Chess", name)
+    savedir = os.path.join("./data/train_stats/ViTGPT2_PV", name)
     plt.savefig(savedir)
     # plt.show()
     rep_name = "Migga/" + experiment_name
