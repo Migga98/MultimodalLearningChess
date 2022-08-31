@@ -147,7 +147,7 @@ if __name__ == "__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
     # Create RTPT object
-    experiment_name = 'ViT_Chess_DGX_V2'
+    experiment_name = 'ViT_Chess_DGX_V3'
     rtpt = RTPT(name_initials='MP', experiment_name="ViT_Chess", max_iterations=epochs)
     # Start the RTPT tracking
     rtpt.start()
@@ -301,7 +301,7 @@ if __name__ == "__main__":
     df_stats = pd.DataFrame(data=training_stats)
     os.makedirs('./data/train_stats/ViT_Chess', exist_ok=True)
 
-    df.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".csv"))
+    #df.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".csv"))
 
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
