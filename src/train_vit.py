@@ -52,9 +52,9 @@ notebook_login()
 '''
 
 if __name__ == "__main__":
-    experiment_name = 'ViT_Chess_DGX_V7'
+    experiment_name = 'ViT_Chess_DGX_V8'
     batch_size = 128  # 256
-    epochs = 10
+    epochs = 15
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         #num_workers=4
     )
 
-    configuration = ViTConfig(num_hidden_layers=12,
+    configuration = ViTConfig(num_hidden_layers=6,
                               num_attention_heads=12,#6,
                               image_size=8,
                               patch_size=2,
