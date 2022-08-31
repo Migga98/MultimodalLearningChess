@@ -53,7 +53,7 @@ notebook_login()
 
 if __name__ == "__main__":
     experiment_name = 'ViT_Chess_DGX_V8'
-    batch_size = 128  # 256
+    batch_size = 64  # 256
     epochs = 15
     learning_rate = 2e-5
     warmup_steps = 1e2
@@ -127,8 +127,8 @@ if __name__ == "__main__":
                               # qkv_bias=False,
                               id2label=id2label,
                               label2id=label2id,
-                              #hidden_dropout_prob=0.1,
-                              #attention_probs_dropout_prob=0.1
+                              hidden_dropout_prob=0.1,
+                              attention_probs_dropout_prob=0.1
                               )
     model = ViTForImageClassification(configuration)
 
@@ -334,7 +334,7 @@ if __name__ == "__main__":
     )
     upload_file(
         path_or_fileobj=savedir,
-        path_in_repo=os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".csv"),
+        path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
 

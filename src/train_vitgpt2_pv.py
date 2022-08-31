@@ -20,7 +20,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
 class Image_Caption_Dataset(Dataset):
-    def __init__(self, df, tokenizer, max_length=64):
+    def __init__(self, df, tokenizer, max_length=128):
         self.df = df
         self.tokenizer = tokenizer
         self.input_ids = []
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     state_data = []
     comment_data = []
     length = data.shape[0]
-    for i in range(int(length * 1)):
+    for i in range(int(length * 0.1)):
         state = data[:][i][0]
         comment = data[:][i][3]
         state_data.append(state)
@@ -87,7 +87,10 @@ if __name__ == "__main__":
 
     df = pd.DataFrame.from_dict({"img": state_data, "text": comment_data}, )
 
-    dataset = Image_Caption_Dataset(df, )
+    tokenizer = GPT2Tokenizer.from_pretrained('gpt2', bos_token='<|startoftext|>', eos_token='<|endoftext|>',
+                                              pad_token='<|pad|>')
+
+    dataset = Image_Caption_Dataset(df, tokenizer)
 
     # Split into training and validation sets
     train_size = int(0.9 * len(dataset))
@@ -100,7 +103,7 @@ if __name__ == "__main__":
         sampler=RandomSampler(train_dataset),  # Select batches randomly
         batch_size=batch_size,
         pin_memory=True,
-        num_workers=4
+        #num_workers=4
     )
 
     validation_dataloader = DataLoader(
@@ -108,14 +111,13 @@ if __name__ == "__main__":
         sampler=SequentialSampler(val_dataset),  # Pull out batches sequentially.
         batch_size=batch_size,
         pin_memory=True,
-        num_workers=4
+        #num_workers=4
     )
 
     decoder = GPT2LMHeadModel.from_pretrained("gpt2", is_decoder=True, add_cross_attention=True,
                                               output_hidden_states=False)
-    encoder = AutoModel.from_pretrained("Migga/ViT_Chess_DGX_V8", use_auth_token=True, )
-    tokenizer = GPT2Tokenizer.from_pretrained('gpt2', bos_token='<|startoftext|>', eos_token='<|endoftext|>',
-                                              pad_token='<|pad|>')
+    encoder = AutoModel.from_pretrained("Migga/ViT_Chess_DGX_V4", use_auth_token=True, )
+
     # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
     # otherwise the tokenizer and model tensors won't match up
     decoder.resize_token_embeddings(len(tokenizer))
@@ -192,7 +194,7 @@ if __name__ == "__main__":
                                 )
 
             '''
-            outputs = model(pixel_values=pixel_values, labels=b_labels, decoder_attention_mask = b_masks,)
+            outputs = model(pixel_values=pixel_values, labels=b_labels, decoder_attention_mask=b_masks,)
             loss = outputs[0]
 
             batch_loss = loss.item()
@@ -336,7 +338,7 @@ if __name__ == "__main__":
     )
     upload_file(
         path_or_fileobj=savedir,
-        path_in_repo=os.path.join("./data/train_stats/ViTGPT2_PV", experiment_name + ".csv"),
+        path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
 
