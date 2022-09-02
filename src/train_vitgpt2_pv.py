@@ -55,7 +55,7 @@ def format_time(elapsed):
 if __name__ == "__main__":
     experiment_name = 'ViTGPT_Chess_pv_DGX_V1'
     batch_size = 32
-    epochs = 2
+    epochs = 20
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     state_data = []
     comment_data = []
     length = data.shape[0]
-    for i in range(int(length * 0.5)):
+    for i in range(int(length * 1)):
         state = data[:][i][0]
         comment = data[:][i][3]
         state_data.append(state)
@@ -223,6 +223,7 @@ if __name__ == "__main__":
                     comment = [caption if caption != -100 else 50258 for caption in comment]
                     print(tokenizer.decode(comment, skip_special_tokens=True))
                     print("{}: {}".format(i, tokenizer.decode(sample_output, skip_special_tokens=True)))
+                    break  # too many outputs on DGX
 
                 model.train()
 

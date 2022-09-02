@@ -339,10 +339,13 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
+    '''
     upload_file(
         path_or_fileobj=savedir,
         path_in_repo=experiment_name + ".txt",
         repo_id=rep_name,
     )
+    '''
+
 
 
