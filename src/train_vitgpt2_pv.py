@@ -53,7 +53,7 @@ def format_time(elapsed):
 
 
 if __name__ == "__main__":
-    experiment_name = 'ViTGPT_Chess_pv_DGX_V1'
+    experiment_name = 'ViTGPT_Chess_pv_DGX_V2'
     batch_size = 32
     epochs = 20
     learning_rate = 2e-5
