@@ -54,12 +54,12 @@ def format_time(elapsed):
 
 if __name__ == "__main__":
     experiment_name = 'ViTGPT_Chess_pv_DGX_V1'
-    batch_size = 64
+    batch_size = 32
     epochs = 2
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
-    sample_every = 500
+    sample_every = 100
 
     label2id, id2label = dict(), dict()
     for i, label in enumerate(LABELS):
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     state_data = []
     comment_data = []
     length = data.shape[0]
-    for i in range(int(length * 0.1)):
+    for i in range(int(length * 0.5)):
         state = data[:][i][0]
         comment = data[:][i][3]
         state_data.append(state)
@@ -279,8 +279,6 @@ if __name__ == "__main__":
         validation_time = format_time(time.time() - t0)
 
         print("  Validation Loss: {0:.2f}".format(avg_val_loss))
-        print("  Validation Accuracy: {0:.2f}".format(accuracy))
-        print("  Validation Correct Samples: {:}".format(correct))
         print("  Validation took: {:}".format(validation_time))
 
         # Record all statistics from this epoch.
@@ -291,7 +289,6 @@ if __name__ == "__main__":
                 'Valid. Loss': avg_val_loss,
                 'Training Time': training_time,
                 'Validation Time': validation_time,
-                'Validation Accuracy': accuracy,
             }
         )
 
@@ -339,11 +336,12 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
+    '''
     upload_file(
         path_or_fileobj=savedir,
         path_in_repo=experiment_name + ".txt",
         repo_id=rep_name,
     )
-
+    '''
 
 
