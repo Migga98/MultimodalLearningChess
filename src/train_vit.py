@@ -52,9 +52,9 @@ notebook_login()
 '''
 
 if __name__ == "__main__":
-    experiment_name = 'ViT_Chess_DGX_V10'
+    experiment_name = 'ViT_Chess_DGX_V11'
     batch_size = 64  # 256
-    epochs = 25
+    epochs = 15
     learning_rate = 0.5*2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -303,6 +303,8 @@ if __name__ == "__main__":
     os.makedirs('./data/train_stats/ViT_Chess', exist_ok=True)
 
     df_stats.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".csv"))
+    df_stats.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".txt"), index=False, sep=' ',
+                    mode='a')
 
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
@@ -335,6 +337,11 @@ if __name__ == "__main__":
     upload_file(
         path_or_fileobj=savedir,
         path_in_repo=experiment_name + ".csv",
+        repo_id=rep_name,
+    )
+    upload_file(
+        path_or_fileobj=savedir,
+        path_in_repo=experiment_name + ".txt",
         repo_id=rep_name,
     )
 

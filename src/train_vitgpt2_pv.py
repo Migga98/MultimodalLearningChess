@@ -48,11 +48,12 @@ class Image_Caption_Dataset(Dataset):
 
 
 def format_time(elapsed):
-    return str(datetime.timedelta(seconds=int(round((elapsed)))))
+    return str(datetime.timedelta(seconds=int(round(elapsed))))
 
 
 
 if __name__ == "__main__":
+    experiment_name = 'ViTGPT_Chess_pv_DGX_V1'
     batch_size = 64
     epochs = 2
     learning_rate = 2e-5
@@ -116,7 +117,7 @@ if __name__ == "__main__":
 
     decoder = GPT2LMHeadModel.from_pretrained("gpt2", is_decoder=True, add_cross_attention=True,
                                               output_hidden_states=False)
-    encoder = AutoModel.from_pretrained("Migga/ViT_Chess_DGX_V4", use_auth_token=True, )
+    encoder = AutoModel.from_pretrained("Migga/ViT_Chess_DGX_V9", use_auth_token=True, )
 
     # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
     # otherwise the tokenizer and model tensors won't match up
@@ -150,7 +151,6 @@ if __name__ == "__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
     # Create RTPT object
-    experiment_name = 'ViTGPT_Chess_pv_DGX_V1'
     rtpt = RTPT(name_initials='MP', experiment_name="ViTGPT2_Chess", max_iterations=epochs)
     # Start the RTPT tracking
     rtpt.start()
@@ -206,7 +206,6 @@ if __name__ == "__main__":
                 print('  Batch {:>5,}  of  {:>5,}. Loss: {:>5,}.   Elapsed: {:}.'.format(step, len(train_dataloader),
                                                                                          batch_loss, elapsed))
 
-
                 model.eval()
 
                 sample_outputs = model.generate(
@@ -226,7 +225,6 @@ if __name__ == "__main__":
                     print("{}: {}".format(i, tokenizer.decode(sample_output, skip_special_tokens=True)))
 
                 model.train()
-
 
             #scaler.scale(loss).backward()
             loss.backward()
@@ -307,7 +305,7 @@ if __name__ == "__main__":
     os.makedirs('./data/train_stats/ViTGPT2_PV', exist_ok=True)
 
     df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_PV", experiment_name + ".csv"))
-
+    df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_PV", experiment_name + ".txt"), index=False, sep=' ', mode='a')
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
     sns.set(style='darkgrid')
@@ -339,6 +337,11 @@ if __name__ == "__main__":
     upload_file(
         path_or_fileobj=savedir,
         path_in_repo=experiment_name + ".csv",
+        repo_id=rep_name,
+    )
+    upload_file(
+        path_or_fileobj=savedir,
+        path_in_repo=experiment_name + ".txt",
         repo_id=rep_name,
     )
 
