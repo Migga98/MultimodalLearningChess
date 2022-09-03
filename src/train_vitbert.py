@@ -59,7 +59,7 @@ def format_time(elapsed):
 if __name__ == "__main__":
     experiment_name = 'ViTBERT_V1'
     batch_size = 32
-    epochs = 8
+    epochs = 2
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -184,8 +184,6 @@ if __name__ == "__main__":
             similarity = outputs.logits_per_image
             bert_out = outputs.text_model_output
             vit_out = outputs.vision_model_output
-            pred = np.argmax(similarity.softmax(dim=1))
-            vit_pred = np.argmax(vit_out.pooler_output)
 
 
             batch_loss = loss.item()
@@ -197,15 +195,14 @@ if __name__ == "__main__":
                 print('  Batch {:>5,}  of  {:>5,}. Loss: {:>5,}.   Elapsed: {:}.'.format(step, len(train_dataloader),
                                                                                          batch_loss, elapsed))
 
-                model.eval()
+                pred = np.argmax(similarity.softmax(dim=1).cpu())
+                vit_pred = np.argmax(vit_out.pooler_output.cpu())
 
                 print("  Similiarity: {0:.2f}".format(similarity))
                 print(" Move: ", move)
                 print(" ViT-move: ", id2label[vit_pred])
                 print(" Predicted-move: ", id2label[pred])
 
-
-                model.train()
 
             #scaler.scale(loss).backward()
             loss.backward()
@@ -256,8 +253,8 @@ if __name__ == "__main__":
                 similarity = outputs.logits_per_image
                 bert_out = outputs.text_model_output
                 vit_out = outputs.vision_model_output
-                pred = np.argmax(similarity.softmax(dim=1))
-                vit_pred = np.argmax(vit_out.pooler_output)
+                pred = np.argmax(similarity.softmax(dim=1).cpu())
+                vit_pred = np.argmax(vit_out.pooler_output.cpu())
                 if pred == label2id[move]:
                     correct +=1
                 if vit_pred == label2id[move]:
