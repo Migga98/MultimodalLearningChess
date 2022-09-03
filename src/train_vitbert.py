@@ -59,7 +59,7 @@ def format_time(elapsed):
 if __name__ == "__main__":
     experiment_name = 'ViTBERT_V1'
     batch_size = 32
-    epochs = 2
+    epochs = 20
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     comment_data = []
     move_data = []
     length = data.shape[0]
-    for i in range(int(length * 0.1)):
+    for i in range(int(length * 1)):
         state = data[:][i][0]
         move = data[:][i][1]
         comment = data[:][i][2]
