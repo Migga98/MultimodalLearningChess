@@ -195,8 +195,8 @@ if __name__ == "__main__":
                 print('  Batch {:>5,}  of  {:>5,}. Loss: {:>5,}.   Elapsed: {:}.'.format(step, len(train_dataloader),
                                                                                          batch_loss, elapsed))
 
-                pred = np.argmax(similarity.softmax(dim=1).cpu())
-                vit_pred = np.argmax(vit_out.pooler_output.cpu())
+                pred = np.argmax(similarity.softmax(dim=1).detach().numpy())
+                vit_pred = np.argmax(vit_out.pooler_output.detach().numpy())
 
                 print("  Similiarity: {0:.2f}".format(similarity))
                 print(" Move: ", move)
@@ -253,8 +253,8 @@ if __name__ == "__main__":
                 similarity = outputs.logits_per_image
                 bert_out = outputs.text_model_output
                 vit_out = outputs.vision_model_output
-                pred = np.argmax(similarity.softmax(dim=1).cpu())
-                vit_pred = np.argmax(vit_out.pooler_output.cpu())
+                pred = np.argmax(similarity.softmax(dim=1).detach().numpy())
+                vit_pred = np.argmax(vit_out.pooler_output.detach().numpy())
                 if pred == label2id[move]:
                     correct +=1
                 if vit_pred == label2id[move]:
