@@ -53,13 +53,13 @@ def format_time(elapsed):
 
 
 if __name__ == "__main__":
-    experiment_name = 'ViTGPT_Chess_pv_DGX_V2'
+    experiment_name = 'ViTGPT_Chess_pv_DGX_V3'
     batch_size = 32
-    epochs = 20
+    epochs = 8
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
-    sample_every = 100
+    sample_every = 200
 
     label2id, id2label = dict(), dict()
     for i, label in enumerate(LABELS):
@@ -104,7 +104,7 @@ if __name__ == "__main__":
         sampler=RandomSampler(train_dataset),  # Select batches randomly
         batch_size=batch_size,
         pin_memory=True,
-        #num_workers=4
+        num_workers=4
     )
 
     validation_dataloader = DataLoader(
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         sampler=SequentialSampler(val_dataset),  # Pull out batches sequentially.
         batch_size=batch_size,
         pin_memory=True,
-        #num_workers=4
+        num_workers=4
     )
 
     decoder = GPT2LMHeadModel.from_pretrained("gpt2", is_decoder=True, add_cross_attention=True,

@@ -55,7 +55,7 @@ if __name__ == "__main__":
     experiment_name = 'ViT_Chess_DGX_V11'
     batch_size = 64  # 256
     epochs = 15
-    learning_rate = 0.5*2e-5
+    learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
     sample_every = 500
