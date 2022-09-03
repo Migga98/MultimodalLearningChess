@@ -191,7 +191,7 @@ if __name__ == "__main__":
                                 )
 
             '''
-            outputs = model(pixel_values=pixel_values,labels=labels,)
+            outputs = model(pixel_values=pixel_values, labels=labels,)
             loss = outputs[0]
 
             batch_loss = loss.item()
@@ -303,8 +303,7 @@ if __name__ == "__main__":
     os.makedirs('./data/train_stats/ViT_Chess', exist_ok=True)
 
     df_stats.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".csv"))
-    df_stats.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".txt"), index=False, sep=' ',
-                    mode='a')
+    #df_stats.to_csv(os.path.join("./data/train_stats/ViT_Chess", experiment_name + ".txt"), index=False, sep=' ',mode='a')
 
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
@@ -339,13 +338,11 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
-    '''
     upload_file(
-        path_or_fileobj=savedir,
-        path_in_repo=experiment_name + ".txt",
+        path_or_fileobj=df_stats.to_json(compression=None),
+        path_in_repo=experiment_name + ".json",
         repo_id=rep_name,
     )
-    '''
 
 
 

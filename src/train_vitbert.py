@@ -12,28 +12,32 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from huggingface_hub import upload_file
-from transformers import GPT2Tokenizer,  VisionEncoderDecoderModel
+from transformers import VisionTextDualEncoderModel, BertTokenizer
 from constants import LABELS
 import random
+
+
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
 class Image_Caption_Dataset(Dataset):
-    def __init__(self, df, tokenizer, max_length=128):
+    def __init__(self, df, tokenizer,  max_length=128):
         self.df = df
         self.tokenizer = tokenizer
         self.input_ids = []
         self.attn_masks = []
         self.pixel_values = []
+        self.moves = []
 
         text = df.text.copy()
         states = df.img.copy()
+        moves = df.move.copy()
+        for move in moves:
+            self.moves.append(move)
         for txt in text:
             encodings_dict = tokenizer('<|startoftext|>' + txt + '<|endoftext|>',
-                                       truncation=True, max_length=max_length, padding="max_length")
-            encodings_dict['input_ids'] = [caption if caption != self.tokenizer.pad_token_id else -100 for caption in
-                                           encodings_dict.input_ids]
+                                        truncation=True, max_length=max_length, padding="max_length")
             self.input_ids.append(torch.tensor(encodings_dict['input_ids']))
             self.attn_masks.append(torch.tensor(encodings_dict['attention_mask']))
 
@@ -44,7 +48,7 @@ class Image_Caption_Dataset(Dataset):
         return self.df.shape[0]
 
     def __getitem__(self, idx):
-        return self.pixel_values[idx].squeeze(), self.input_ids[idx], self.attn_masks[idx]
+        return self.pixel_values[idx].squeeze(), self.input_ids[idx], self.attn_masks[idx], self.moves[idx]
 
 
 def format_time(elapsed):
@@ -53,13 +57,13 @@ def format_time(elapsed):
 
 
 if __name__ == "__main__":
-    experiment_name = 'ViTGPT_Chess_comment_DGX_V3'
+    experiment_name = 'ViTBERT_V1'
     batch_size = 32
     epochs = 8
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
-    sample_every = 400
+    sample_every = 200
 
     label2id, id2label = dict(), dict()
     for i, label in enumerate(LABELS):
@@ -79,17 +83,19 @@ if __name__ == "__main__":
 
     state_data = []
     comment_data = []
+    move_data = []
     length = data.shape[0]
-    for i in range(int(length * 1)):
+    for i in range(int(length * 0.1)):
         state = data[:][i][0]
+        move = data[:][i][1]
         comment = data[:][i][2]
         state_data.append(state)
         comment_data.append(comment)
+        move_data.append(move)
 
-    df = pd.DataFrame.from_dict({"img": state_data, "text": comment_data}, )
+    df = pd.DataFrame.from_dict({"img": state_data, "move": move_data, "text": comment_data}, )
 
-    tokenizer = GPT2Tokenizer.from_pretrained('gpt2', bos_token='<|startoftext|>', eos_token='<|endoftext|>',
-                                              pad_token='<|pad|>')
+    tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
     dataset = Image_Caption_Dataset(df, tokenizer)
 
@@ -115,17 +121,9 @@ if __name__ == "__main__":
         #num_workers=4
     )
 
-    model = VisionEncoderDecoderModel.from_pretrained("Migga/ViTGPT_Chess_pv_DGX_V3")
-
-    # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
-    # otherwise the tokenizer and model tensors won't match up
-    model.decoder.resize_token_embeddings(len(tokenizer))
-    model.config.decoder_start_token_id = tokenizer.bos_token_id
-    model.config.pad_token_id = tokenizer.pad_token_id
-
-    model.config.block_size = 128
-    model.config.pad_token_id = tokenizer.pad_token_id
-    model.config.decoder_start_token_id = tokenizer.bos_token_id
+    model = VisionTextDualEncoderModel.from_vision_text_pretrained(
+        "Migga/ViT_Chess_DGX_V9", "bert-base-uncased"
+    )
 
     optimizer = AdamW(model.parameters(),
                       lr=learning_rate,
@@ -143,7 +141,7 @@ if __name__ == "__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
     # Create RTPT object
-    rtpt = RTPT(name_initials='MP', experiment_name="ViTGPT2_Chess", max_iterations=epochs)
+    rtpt = RTPT(name_initials='MP', experiment_name="ViTBERT_Chess", max_iterations=epochs)
     # Start the RTPT tracking
     rtpt.start()
 
@@ -174,20 +172,21 @@ if __name__ == "__main__":
         for step, batch in enumerate(train_dataloader):
 
             pixel_values = batch[0].to(device).float()
-            b_labels = batch[1].to(device)
-            b_masks = batch[2].to(device)
+            input_ids = batch[1].to(device)
+            attention_mask = batch[2].to(device)
+            move = batch[3]
 
             for param in model.parameters():
                 param.grad = None
-            '''
-            with torch.cuda.amp.autocast():
-                outputs = model(pixel_values=pixel_values,
-                                labels=labels,
-                                )
 
-            '''
-            outputs = model(pixel_values=pixel_values, labels=b_labels, decoder_attention_mask=b_masks,)
-            loss = outputs[0]
+            outputs = model(pixel_values=pixel_values, input_ids=input_ids, attention_mask=attention_mask, return_loss=True)
+            loss = outputs.loss
+            similarity = outputs.logits_per_image
+            bert_out = outputs.text_model_output
+            vit_out = outputs.vision_model_output
+            pred = np.argmax(similarity.softmax(dim=1))
+            vit_pred = np.argmax(vit_out.pooler_output)
+
 
             batch_loss = loss.item()
             total_train_loss += batch_loss
@@ -200,22 +199,11 @@ if __name__ == "__main__":
 
                 model.eval()
 
-                sample_outputs = model.generate(
-                                    pixel_values,
-                                    bos_token_id=random.randint(1,30000),
-                                    do_sample=True,
-                                    top_k=50,
-                                    max_length=128,
-                                    top_p=0.95,
-                                    num_return_sequences=1
-                                )
+                print("  Similiarity: {0:.2f}".format(similarity))
+                print(" Move: ", move)
+                print(" ViT-move: ", id2label[vit_pred])
+                print(" Predicted-move: ", id2label[pred])
 
-                for i, sample_output in enumerate(sample_outputs):
-                    comment = batch[1][i].to(device)
-                    comment = [caption if caption != -100 else 50258 for caption in comment]
-                    print(tokenizer.decode(comment, skip_special_tokens=True))
-                    print("{}: {}".format(i, tokenizer.decode(sample_output, skip_special_tokens=True)))
-                    break  # too many outputs on DGX
 
                 model.train()
 
@@ -251,18 +239,30 @@ if __name__ == "__main__":
         total_eval_loss = 0
         nb_eval_steps = 0
 
-        correct, total = 0, 0
-        accuracy = 0.0
+        correct, vit_correct, total = 0, 0, 0
+        accuracy, vit_accuracy = 0.0, 0.0
         # Evaluate data for one epoch
         for batch in validation_dataloader:
             pixel_values = batch[0].to(device).float()
-            b_labels = batch[1].to(device)
-            b_masks = batch[2].to(device)
+            input_ids = batch[1].to(device)
+            attention_mask = batch[2].to(device)
+            move = batch[3]
+            total +=1
 
             with torch.no_grad():
-                outputs = model(pixel_values=pixel_values, labels=b_labels, decoder_attention_mask=b_masks,)
+                outputs = model(pixel_values=pixel_values, input_ids=input_ids, attention_mask=attention_mask,
+                                return_loss=True)
+                loss = outputs.loss
+                similarity = outputs.logits_per_image
+                bert_out = outputs.text_model_output
+                vit_out = outputs.vision_model_output
+                pred = np.argmax(similarity.softmax(dim=1))
+                vit_pred = np.argmax(vit_out.pooler_output)
+                if pred == label2id[move]:
+                    correct +=1
+                if vit_pred == label2id[move]:
+                    vit_correct +=1
 
-                loss = outputs[0]
 
             batch_loss = loss.item()
             total_eval_loss += batch_loss
@@ -270,7 +270,12 @@ if __name__ == "__main__":
         avg_val_loss = total_eval_loss / len(validation_dataloader)
 
         validation_time = format_time(time.time() - t0)
-
+        accuracy = 100 * correct / total
+        vit_accuracy = 100 * vit_correct / total
+        print("  Validation Loss: {0:.2f}".format(avg_val_loss))
+        print("  Validation Accuracy: {0:.2f}".format(accuracy))
+        print("  Validation Correct Samples: {:}".format(correct))
+        print("  Validation ViT-Accuracy: {0:.2f}".format(vit_accuracy))
         print("  Validation Loss: {0:.2f}".format(avg_val_loss))
         print("  Validation took: {:}".format(validation_time))
 
@@ -282,21 +287,24 @@ if __name__ == "__main__":
                 'Valid. Loss': avg_val_loss,
                 'Training Time': training_time,
                 'Validation Time': validation_time,
+                'Accuracy': accuracy,
+                'ViT-Accuracy': vit_accuracy,
             }
         )
 
     print("")
     print("Training complete!")
+    print("  Validation Accuracy: {0:.2f}".format(accuracy))
     print("Total training took {:} (h:mm:ss)".format(format_time(time.time() - total_t0)))
 
     model.push_to_hub(repo_path_or_name=experiment_name)
     tokenizer.push_to_hub(repo_path_or_name=experiment_name)
 
     df_stats = pd.DataFrame(data=training_stats)
-    os.makedirs('./data/train_stats/ViTGPT2_Comment', exist_ok=True)
+    os.makedirs('./data/train_stats/ViTBERT', exist_ok=True)
 
-    df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_Comment", experiment_name + ".csv"))
-    #df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_Comment", experiment_name + ".txt"), index=False, sep=' ', mode='a')
+    df_stats.to_csv(os.path.join("./data/train_stats/ViTBERT", experiment_name + ".csv"))
+
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
     sns.set(style='darkgrid')
@@ -316,12 +324,10 @@ if __name__ == "__main__":
     plt.legend()
     plt.xticks(range(1, epochs + 1))
     name = "Loss_vs_Epoch_%s.png" % datetime.datetime.today().strftime("%Y-%m-%d-%H-%M")
-    savedir = os.path.join("./data/train_stats/ViTGPT2_Comment", name)
+    savedir = os.path.join("./data/train_stats/ViTBERT", name)
     plt.savefig(savedir)
     # plt.show()
     rep_name = "Migga/" + experiment_name
-
-
     upload_file(
         path_or_fileobj=savedir,
         path_in_repo=name,
@@ -332,12 +338,10 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
-
     upload_file(
         path_or_fileobj=df_stats.to_json(compression=None),
         path_in_repo=experiment_name + ".json",
         repo_id=rep_name,
     )
-
 
 

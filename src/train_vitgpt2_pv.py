@@ -104,7 +104,7 @@ if __name__ == "__main__":
         sampler=RandomSampler(train_dataset),  # Select batches randomly
         batch_size=batch_size,
         pin_memory=True,
-        num_workers=4
+        #num_workers=4
     )
 
     validation_dataloader = DataLoader(
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         sampler=SequentialSampler(val_dataset),  # Pull out batches sequentially.
         batch_size=batch_size,
         pin_memory=True,
-        num_workers=4
+        #num_workers=4
     )
 
     decoder = GPT2LMHeadModel.from_pretrained("gpt2", is_decoder=True, add_cross_attention=True,
@@ -298,12 +298,13 @@ if __name__ == "__main__":
     print("Total training took {:} (h:mm:ss)".format(format_time(time.time() - total_t0)))
 
     model.push_to_hub(repo_path_or_name=experiment_name)
+    tokenizer.push_to_hub(repo_path_or_name=experiment_name)
 
     df_stats = pd.DataFrame(data=training_stats)
     os.makedirs('./data/train_stats/ViTGPT2_PV', exist_ok=True)
 
     df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_PV", experiment_name + ".csv"))
-    df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_PV", experiment_name + ".txt"), index=False, sep=' ', mode='a')
+    #df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_PV", experiment_name + ".txt"), index=False, sep=' ', mode='a')
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
     sns.set(style='darkgrid')
@@ -337,12 +338,10 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
-    '''
     upload_file(
-        path_or_fileobj=savedir,
-        path_in_repo=experiment_name + ".txt",
+        path_or_fileobj=df_stats.to_json(compression=None),
+        path_in_repo=experiment_name + ".json",
         repo_id=rep_name,
     )
-    '''
 
 
