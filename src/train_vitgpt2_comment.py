@@ -115,7 +115,7 @@ if __name__ == "__main__":
         #num_workers=4
     )
 
-    model = VisionEncoderDecoderModel.from_pretrained("ViTGPT_Chess_pv_DGX_V2")
+    model = VisionEncoderDecoderModel.from_pretrained("Migga/ViTGPT_Chess_pv_DGX_V2")
 
     # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
     # otherwise the tokenizer and model tensors won't match up
@@ -126,8 +126,6 @@ if __name__ == "__main__":
     model.config.block_size = 128
     model.config.pad_token_id = tokenizer.pad_token_id
     model.config.decoder_start_token_id = tokenizer.bos_token_id
-
-
 
     optimizer = AdamW(model.parameters(),
                       lr=learning_rate,
