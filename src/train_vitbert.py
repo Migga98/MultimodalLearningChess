@@ -150,7 +150,8 @@ if __name__ == "__main__":
     total_t0 = time.time()
 
     training_stats = []
-
+    pred = []
+    vit_pred = []
     model = model.to(device)
 
     for epoch_i in range(0, epochs):
@@ -194,14 +195,15 @@ if __name__ == "__main__":
                 elapsed = format_time(time.time() - t0)
                 print('  Batch {:>5,}  of  {:>5,}. Loss: {:>5,}.   Elapsed: {:}.'.format(step, len(train_dataloader),
                                                                                          batch_loss, elapsed))
+                for i, m in enumerate(move):
 
-                pred = np.argmax(similarity.softmax(dim=1).cpu().detach().numpy())
-                vit_pred = np.argmax(vit_out.pooler_output.cpu().detach().numpy())
+                    pred[i] = np.argmax(similarity[i].softmax(dim=1).cpu().detach().numpy())
+                    vit_pred[i] = np.argmax(vit_out[i].pooler_output.cpu().detach().numpy())
 
                 #print("  Similiarity: {0:.2f}".format(similarity))
-                print(" Move: ", move)
-                print(" ViT-move: ", id2label[vit_pred])
-                print(" Predicted-move: ", id2label[pred])
+                print(" Move: ", move[0])
+                print(" ViT-move: ", id2label[vit_pred[0]])
+                print(" Predicted-move: ", id2label[pred[0]])
 
 
             #scaler.scale(loss).backward()
@@ -253,12 +255,14 @@ if __name__ == "__main__":
                 similarity = outputs.logits_per_image
                 bert_out = outputs.text_model_output
                 vit_out = outputs.vision_model_output
-                pred = np.argmax(similarity.softmax(dim=1).cpu().detach().numpy())
-                vit_pred = np.argmax(vit_out.pooler_output.cpu().detach().numpy())
-                if pred == label2id[move]:
-                    correct +=1
-                if vit_pred == label2id[move]:
-                    vit_correct +=1
+                for i, m in enumerate(move):
+                    pred[i] = np.argmax(similarity[i].softmax(dim=1).cpu().detach().numpy())
+                    vit_pred[i] = np.argmax(vit_out[i].pooler_output.cpu().detach().numpy())
+
+                    if pred[i] == label2id[m]:
+                        correct +=1
+                    if vit_pred[i] == label2id[m]:
+                        vit_correct +=1
 
 
             batch_loss = loss.item()
