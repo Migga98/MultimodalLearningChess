@@ -194,7 +194,8 @@ if __name__ == "__main__":
             if step % sample_every == 0 and not step == 0:
                 elapsed = format_time(time.time() - t0)
                 print('  Batch {:>5,}  of  {:>5,}. Loss: {:>5,}.   Elapsed: {:}.'.format(step, len(train_dataloader),
-                                                                                         batch_loss, elapsed))
+                                                                                    batch_loss, elapsed))
+                '''
                 for i, m in enumerate(move):
 
                     pred[i] = np.argmax(similarity[i].softmax(dim=1).cpu().detach().numpy())
@@ -204,7 +205,7 @@ if __name__ == "__main__":
                 print(" Move: ", move[0])
                 print(" ViT-move: ", id2label[vit_pred[0]])
                 print(" Predicted-move: ", id2label[pred[0]])
-
+                '''
 
             #scaler.scale(loss).backward()
             loss.backward()
@@ -255,6 +256,7 @@ if __name__ == "__main__":
                 similarity = outputs.logits_per_image
                 bert_out = outputs.text_model_output
                 vit_out = outputs.vision_model_output
+                '''
                 for i, m in enumerate(move):
                     pred[i] = np.argmax(similarity[i].softmax(dim=1).cpu().detach().numpy())
                     vit_pred[i] = np.argmax(vit_out[i].pooler_output.cpu().detach().numpy())
@@ -263,7 +265,7 @@ if __name__ == "__main__":
                         correct +=1
                     if vit_pred[i] == label2id[m]:
                         vit_correct +=1
-
+                '''
 
             batch_loss = loss.item()
             total_eval_loss += batch_loss
@@ -271,8 +273,8 @@ if __name__ == "__main__":
         avg_val_loss = total_eval_loss / len(validation_dataloader)
 
         validation_time = format_time(time.time() - t0)
-        accuracy = 100 * correct / total
-        vit_accuracy = 100 * vit_correct / total
+        #accuracy = 100 * correct / total
+        #vit_accuracy = 100 * vit_correct / total
         print("  Validation Loss: {0:.2f}".format(avg_val_loss))
         print("  Validation Accuracy: {0:.2f}".format(accuracy))
         print("  Validation Correct Samples: {:}".format(correct))
