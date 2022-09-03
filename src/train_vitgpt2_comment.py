@@ -53,13 +53,13 @@ def format_time(elapsed):
 
 
 if __name__ == "__main__":
-    experiment_name = 'ViTGPT_Chess_comment_DGX_V1'
+    experiment_name = 'ViTGPT_Chess_comment_DGX_V2'
     batch_size = 32
     epochs = 8
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
-    sample_every = 200
+    sample_every = 400
 
     label2id, id2label = dict(), dict()
     for i, label in enumerate(LABELS):
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         #num_workers=4
     )
 
-    model = VisionEncoderDecoderModel.from_pretrained("Migga/ViTGPT_Chess_pv_DGX_V2")
+    model = VisionEncoderDecoderModel.from_pretrained("Migga/ViTGPT_Chess_pv_DGX_V3")
 
     # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
     # otherwise the tokenizer and model tensors won't match up
@@ -295,7 +295,7 @@ if __name__ == "__main__":
     os.makedirs('./data/train_stats/ViTGPT2_Comment', exist_ok=True)
 
     df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_Comment", experiment_name + ".csv"))
-    df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_Comment", experiment_name + ".txt"), index=False, sep=' ', mode='a')
+    #df_stats.to_csv(os.path.join("./data/train_stats/ViTGPT2_Comment", experiment_name + ".txt"), index=False, sep=' ', mode='a')
     # Use the 'epoch' as the row index.
     df_stats = df_stats.set_index('epoch')
     sns.set(style='darkgrid')
@@ -319,6 +319,8 @@ if __name__ == "__main__":
     plt.savefig(savedir)
     # plt.show()
     rep_name = "Migga/" + experiment_name
+
+
     upload_file(
         path_or_fileobj=savedir,
         path_in_repo=name,
@@ -329,12 +331,12 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
-    '''
+
     upload_file(
-        path_or_fileobj=savedir,
-        path_in_repo=experiment_name + ".txt",
+        path_or_fileobj=df_stats.to_json(compression=None),
+        path_in_repo=experiment_name + ".json",
         repo_id=rep_name,
     )
-    '''
+
 
 

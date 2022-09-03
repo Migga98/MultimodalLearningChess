@@ -127,8 +127,8 @@ if __name__ == "__main__":
                               # qkv_bias=False,
                               id2label=id2label,
                               label2id=label2id,
-                              #hidden_dropout_prob=0.1,
-                              #attention_probs_dropout_prob=0.1
+                              hidden_dropout_prob=0.1,
+                              attention_probs_dropout_prob=0.1
                               )
     model = ViTForImageClassification(configuration)
 
