@@ -12,7 +12,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from huggingface_hub import upload_file
-from transformers import GPT2LMHeadModel, GPT2Tokenizer, AutoModel, VisionEncoderDecoderModel
+from transformers import GPT2Tokenizer,  VisionEncoderDecoderModel
 from constants import LABELS
 import random
 
@@ -115,19 +115,13 @@ if __name__ == "__main__":
         #num_workers=4
     )
 
-    decoder = GPT2LMHeadModel.from_pretrained("gpt2", is_decoder=True, add_cross_attention=True,
-                                              output_hidden_states=False)
-    encoder = AutoModel.from_pretrained("Migga/ViTGPT_Chess_pv_DGX_V2", use_auth_token=True, )
+    model = VisionEncoderDecoderModel.from_pretrained("ViTGPT_Chess_pv_DGX_V2")
 
     # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
     # otherwise the tokenizer and model tensors won't match up
-    decoder.resize_token_embeddings(len(tokenizer))
-    decoder.config.decoder_start_token_id = tokenizer.bos_token_id
-    decoder.config.pad_token_id = tokenizer.pad_token_id
-
-    model = VisionEncoderDecoderModel.from_encoder_decoder_pretrained(
-        encoder_model=encoder, decoder_model=decoder
-    )
+    model.decoder.resize_token_embeddings(len(tokenizer))
+    model.config.decoder_start_token_id = tokenizer.bos_token_id
+    model.config.pad_token_id = tokenizer.pad_token_id
 
     model.config.block_size = 128
     model.config.pad_token_id = tokenizer.pad_token_id
@@ -213,7 +207,7 @@ if __name__ == "__main__":
                                     bos_token_id=random.randint(1,30000),
                                     do_sample=True,
                                     top_k=50,
-                                    max_length = 64,
+                                    max_length=128,
                                     top_p=0.95,
                                     num_return_sequences=1
                                 )
