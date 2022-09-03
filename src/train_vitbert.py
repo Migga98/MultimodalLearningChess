@@ -198,7 +198,7 @@ if __name__ == "__main__":
                 pred = np.argmax(similarity.softmax(dim=1).cpu().detach().numpy())
                 vit_pred = np.argmax(vit_out.pooler_output.cpu().detach().numpy())
 
-                print("  Similiarity: {0:.2f}".format(similarity))
+                #print("  Similiarity: {0:.2f}".format(similarity))
                 print(" Move: ", move)
                 print(" ViT-move: ", id2label[vit_pred])
                 print(" Predicted-move: ", id2label[pred])
