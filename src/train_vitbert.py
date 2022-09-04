@@ -58,10 +58,10 @@ def format_time(elapsed):
 
 
 if __name__ == "__main__":
-    experiment_name = 'ViTBERT_V3'
+    experiment_name = 'ViTBERT_V2'
     batch_size = 32
     epochs = 10
-    learning_rate = 0.1 * 2e-5
+    learning_rate = 10 * 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
     sample_every = 200
