@@ -202,8 +202,8 @@ if __name__ == "__main__":
 
                 #print("  Similiarity: {0:.2f}".format(similarity))
                 print(" Move: ", move[0])
-                print(" ViT-move: ", id2label[vit_pred[0].item()])
-                print(" Predicted-move: ", id2label[pred[0].item()])
+                print(" ViT-move: ", id2label[vit_pred.item()])
+                print(" Predicted-move: ", id2label[pred.item()])
 
 
             #scaler.scale(loss).backward()
@@ -260,9 +260,9 @@ if __name__ == "__main__":
                 vit_pred = torch.argmax(vit_out.pooler_output).cpu().detach()
 
                 for i, m in enumerate(move):
-                    if pred[i].item() == label2id[m]:
+                    if pred.item() == label2id[m]:
                         correct += 1
-                    if vit_pred[i].item() == label2id[m]:
+                    if vit_pred.item() == label2id[m]:
                         vit_correct += 1
 
 
