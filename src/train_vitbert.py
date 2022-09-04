@@ -14,6 +14,7 @@ from tqdm import tqdm
 from huggingface_hub import upload_file
 from transformers import VisionTextDualEncoderModel, BertTokenizer
 from constants import LABELS
+import json
 import random
 
 
@@ -341,8 +342,12 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
+
+    with open(os.path.join(savedir, experiment_name) + ".json", 'w') as json_file:
+        json.dump(df_stats.to_json(compression=None), json_file)
+
     upload_file(
-        path_or_fileobj=df_stats.to_json(compression=None),
+        path_or_fileobj=savedir,
         path_in_repo=experiment_name + ".json",
         repo_id=rep_name,
     )
