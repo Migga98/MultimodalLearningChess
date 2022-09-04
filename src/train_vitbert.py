@@ -196,7 +196,7 @@ if __name__ == "__main__":
                 elapsed = format_time(time.time() - t0)
                 print('  Batch {:>5,}  of  {:>5,}. Loss: {:>5,}.   Elapsed: {:}.'.format(step, len(train_dataloader),
                                                                                     batch_loss, elapsed))
-
+                '''
                 pred = torch.argmax(similarity.softmax(dim=1)).cpu().detach()
                 vit_pred = torch.argmax(vit_out.pooler_output).cpu().detach()
 
@@ -204,7 +204,7 @@ if __name__ == "__main__":
                 print(" Move: ", move[0])
                 print(" ViT-move: ", id2label[vit_pred.item()])
                 print(" Predicted-move: ", id2label[pred.item()])
-
+                '''
 
             #scaler.scale(loss).backward()
             loss.backward()
@@ -252,6 +252,7 @@ if __name__ == "__main__":
                 outputs = model(pixel_values=pixel_values, input_ids=input_ids, attention_mask=attention_mask,
                                 return_loss=True)
                 loss = outputs.loss
+                '''
                 similarity = outputs.logits_per_image
                 bert_out = outputs.text_model_output
                 vit_out = outputs.vision_model_output
@@ -264,7 +265,7 @@ if __name__ == "__main__":
                         correct += 1
                     if vit_pred.item() == label2id[m]:
                         vit_correct += 1
-
+                '''
 
             batch_loss = loss.item()
             total_eval_loss += batch_loss
@@ -272,8 +273,10 @@ if __name__ == "__main__":
         avg_val_loss = total_eval_loss / len(validation_dataloader)
 
         validation_time = format_time(time.time() - t0)
+        '''
         accuracy = 100 * correct / total
         vit_accuracy = 100 * vit_correct / total
+        '''
         print("  Validation Loss: {0:.2f}".format(avg_val_loss))
         print("  Validation Accuracy: {0:.2f}".format(accuracy))
         print("  Validation Correct Samples: {:}".format(correct))
