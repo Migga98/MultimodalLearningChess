@@ -58,10 +58,10 @@ def format_time(elapsed):
 
 
 if __name__ == "__main__":
-    experiment_name = 'ViTBERT_V2'
+    experiment_name = 'ViTBERT_V3'
     batch_size = 32
     epochs = 10
-    learning_rate = 10 * 2e-5
+    learning_rate = 0.1 * 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
     sample_every = 200
@@ -248,7 +248,7 @@ if __name__ == "__main__":
             input_ids = batch[1].to(device)
             attention_mask = batch[2].to(device)
             move = batch[3]
-            total +=1
+            total += 1
 
             with torch.no_grad():
                 outputs = model(pixel_values=pixel_values, input_ids=input_ids, attention_mask=attention_mask,
