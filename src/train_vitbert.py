@@ -57,10 +57,10 @@ def format_time(elapsed):
 
 
 if __name__ == "__main__":
-    experiment_name = 'ViTBERT_V1'
+    experiment_name = 'ViTBERT_V2'
     batch_size = 32
-    epochs = 20
-    learning_rate = 2e-5
+    epochs = 10
+    learning_rate = 10 * 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
     sample_every = 200
@@ -195,17 +195,17 @@ if __name__ == "__main__":
                 elapsed = format_time(time.time() - t0)
                 print('  Batch {:>5,}  of  {:>5,}. Loss: {:>5,}.   Elapsed: {:}.'.format(step, len(train_dataloader),
                                                                                     batch_loss, elapsed))
-                '''
+
                 for i, m in enumerate(move):
 
-                    pred[i] = np.argmax(similarity[i].softmax(dim=1).cpu().detach().numpy())
-                    vit_pred[i] = np.argmax(vit_out[i].pooler_output.cpu().detach().numpy())
+                    pred[i] = torch.argmax(similarity[i].softmax(dim=1)).cpu().detach()
+                    vit_pred[i] = torch.argmax(vit_out[i].pooler_output).cpu().detach()
 
                 #print("  Similiarity: {0:.2f}".format(similarity))
                 print(" Move: ", move[0])
                 print(" ViT-move: ", id2label[vit_pred[0]])
                 print(" Predicted-move: ", id2label[pred[0]])
-                '''
+
 
             #scaler.scale(loss).backward()
             loss.backward()
@@ -256,16 +256,16 @@ if __name__ == "__main__":
                 similarity = outputs.logits_per_image
                 bert_out = outputs.text_model_output
                 vit_out = outputs.vision_model_output
-                '''
+
                 for i, m in enumerate(move):
-                    pred[i] = np.argmax(similarity[i].softmax(dim=1).cpu().detach().numpy())
-                    vit_pred[i] = np.argmax(vit_out[i].pooler_output.cpu().detach().numpy())
+                    pred[i] = torch.argmax(similarity[i].softmax(dim=1)).cpu().detach()
+                    vit_pred[i] = torch.argmax(vit_out[i].pooler_output).cpu().detach()
 
                     if pred[i] == label2id[m]:
-                        correct +=1
+                        correct += 1
                     if vit_pred[i] == label2id[m]:
-                        vit_correct +=1
-                '''
+                        vit_correct += 1
+
 
             batch_loss = loss.item()
             total_eval_loss += batch_loss
@@ -273,8 +273,8 @@ if __name__ == "__main__":
         avg_val_loss = total_eval_loss / len(validation_dataloader)
 
         validation_time = format_time(time.time() - t0)
-        #accuracy = 100 * correct / total
-        #vit_accuracy = 100 * vit_correct / total
+        accuracy = 100 * correct / total
+        vit_accuracy = 100 * vit_correct / total
         print("  Validation Loss: {0:.2f}".format(avg_val_loss))
         print("  Validation Accuracy: {0:.2f}".format(accuracy))
         print("  Validation Correct Samples: {:}".format(correct))
