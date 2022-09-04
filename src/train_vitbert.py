@@ -197,10 +197,8 @@ if __name__ == "__main__":
                 print('  Batch {:>5,}  of  {:>5,}. Loss: {:>5,}.   Elapsed: {:}.'.format(step, len(train_dataloader),
                                                                                     batch_loss, elapsed))
 
-                for i, m in enumerate(move):
-
-                    pred[i] = torch.argmax(similarity[i].softmax(dim=1)).cpu().detach()
-                    vit_pred[i] = torch.argmax(vit_out[i].pooler_output).cpu().detach()
+                pred = torch.argmax(similarity.softmax(dim=1)).cpu().detach()
+                vit_pred = torch.argmax(vit_out.pooler_output).cpu().detach()
 
                 #print("  Similiarity: {0:.2f}".format(similarity))
                 print(" Move: ", move[0])
@@ -258,10 +256,10 @@ if __name__ == "__main__":
                 bert_out = outputs.text_model_output
                 vit_out = outputs.vision_model_output
 
-                for i, m in enumerate(move):
-                    pred[i] = torch.argmax(similarity[i].softmax(dim=1)).cpu().detach()
-                    vit_pred[i] = torch.argmax(vit_out[i].pooler_output).cpu().detach()
+                pred = torch.argmax(similarity.softmax(dim=1)).cpu().detach()
+                vit_pred = torch.argmax(vit_out.pooler_output).cpu().detach()
 
+                for i, m in enumerate(move):
                     if pred[i] == label2id[m]:
                         correct += 1
                     if vit_pred[i] == label2id[m]:
