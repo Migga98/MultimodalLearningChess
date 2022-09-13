@@ -52,9 +52,9 @@ notebook_login()
 '''
 
 if __name__ == "__main__":
-    experiment_name = 'ViT_Chess_DGX_V11'
+    experiment_name = 'ViT_Chess_DGX_V12'
     batch_size = 64  # 256
-    epochs = 15
+    epochs = 20
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
@@ -116,14 +116,14 @@ if __name__ == "__main__":
     configuration = ViTConfig(num_hidden_layers=6,
                               num_attention_heads=12,#6,
                               image_size=8,
-                              patch_size=2,
+                              patch_size=4,
                               num_channels=24,
                               num_labels=1968,
                               add_pooling_layer=False,
                               hidden_size=768,#1968,
                               intermediate_size=3072, #1 * 1968,
                               # layer_norm_eps=0.0,
-                              encoder_stride=2,
+                              encoder_stride=4,
                               # qkv_bias=False,
                               id2label=id2label,
                               label2id=label2id,
