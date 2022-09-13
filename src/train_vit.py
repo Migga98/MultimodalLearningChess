@@ -123,7 +123,7 @@ if __name__ == "__main__":
                               hidden_size=768,#1968,
                               intermediate_size=3072, #1 * 1968,
                               # layer_norm_eps=0.0,
-                              encoder_stride=1,
+                              encoder_stride=2,
                               # qkv_bias=False,
                               id2label=id2label,
                               label2id=label2id,
@@ -338,11 +338,13 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
+    """
     upload_file(
         path_or_fileobj=df_stats.to_json(compression=None),
         path_in_repo=experiment_name + ".json",
         repo_id=rep_name,
     )
+    """
 
 
 
