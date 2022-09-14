@@ -59,7 +59,7 @@ if __name__ == "__main__":
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
-    sample_every = 400
+    sample_every = 500
 
     label2id, id2label = dict(), dict()
     for i, label in enumerate(LABELS):
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         #num_workers=4
     )
 
-    model = VisionEncoderDecoderModel.from_pretrained("Migga/ViTGPT_Chess_pv_DGX_V3")
+    model = VisionEncoderDecoderModel.from_pretrained("Migga/ViTGPT_Chess_pv_DGX_V4")
 
     # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
     # otherwise the tokenizer and model tensors won't match up
@@ -333,11 +333,6 @@ if __name__ == "__main__":
         repo_id=rep_name,
     )
 
-    upload_file(
-        path_or_fileobj=df_stats.to_json(compression=None),
-        path_in_repo=experiment_name + ".json",
-        repo_id=rep_name,
-    )
 
 
 

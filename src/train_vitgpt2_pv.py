@@ -59,7 +59,7 @@ if __name__ == "__main__":
     learning_rate = 2e-5
     warmup_steps = 1e2
     epsilon = 1e-8
-    sample_every = 200
+    sample_every = 500
 
     label2id, id2label = dict(), dict()
     for i, label in enumerate(LABELS):
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     decoder = GPT2LMHeadModel.from_pretrained("gpt2", is_decoder=True, add_cross_attention=True,
                                               output_hidden_states=False)
-    encoder = AutoModel.from_pretrained("Migga/ViT_Chess_DGX_V9", use_auth_token=True, )
+    encoder = AutoModel.from_pretrained("Migga/ViT_Chess_DGX_V12", use_auth_token=True, )
 
     # this step is necessary because I've added some tokens (bos_token, etc) to the embeddings
     # otherwise the tokenizer and model tensors won't match up
@@ -338,10 +338,11 @@ if __name__ == "__main__":
         path_in_repo=experiment_name + ".csv",
         repo_id=rep_name,
     )
+    """
     upload_file(
         path_or_fileobj=df_stats.to_json(compression=None),
         path_in_repo=experiment_name + ".json",
         repo_id=rep_name,
     )
-
+    """
 
